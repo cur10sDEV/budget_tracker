@@ -7,9 +7,10 @@ import { usePathname } from "next/navigation";
 interface INavbarItemProps {
   label: string;
   link: string;
+  clickCallback?: () => void;
 }
 
-const NavbarItem = ({ label, link }: INavbarItemProps) => {
+const NavbarItem = ({ label, link, clickCallback }: INavbarItemProps) => {
   const pathname = usePathname();
   const isActive = pathname === link;
   return (
@@ -21,6 +22,7 @@ const NavbarItem = ({ label, link }: INavbarItemProps) => {
           isActive && "text-foreground"
         )}
         href={link}
+        onClick={clickCallback && clickCallback}
       >
         {label}
       </Link>
