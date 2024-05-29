@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -20,53 +18,77 @@ import {
 import { currencies } from "@/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { typeCurrency } from "@/types";
+import { UserSettings } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import SkeletonWrapper from "./loaders/SkeletonWrapper";
 
 const CurrencySelector = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [currency, setCurrency] = React.useState<typeCurrency | null>(null);
+  const [currency, setCurrency] = useState<typeCurrency | null>(null);
+
+  const { isLoading, data } = useQuery<UserSettings>({
+    queryKey: ["userSettings"],
+    queryFn: () => fetch("/api/user/settings").then((res) => res.json()),
+  });
+
+  useEffect(() => {
+    if (!data) return;
+
+    const userCurrency = currencies.find(
+      (currency) => currency.value === data.currency
+    );
+    if (userCurrency) {
+      setCurrency(userCurrency);
+    }
+  }, [data]);
 
   if (isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full justify-start">
-            {currency ? <>{currency.label}</> : <>Set Currency</>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start">
-          <StatusList setOpen={setOpen} setCurrency={setCurrency} />
-        </PopoverContent>
-      </Popover>
+      <SkeletonWrapper isLoading={isLoading}>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild disabled={isLoading}>
+            <Button variant="outline" className="w-full justify-start">
+              {currency ? <>{currency.label}</> : <>Set Currency</>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-0" align="start">
+            <CurrencyList setOpen={setOpen} setCurrency={setCurrency} />
+          </PopoverContent>
+        </Popover>
+      </SkeletonWrapper>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline" className="w-full justify-start">
-          {currency ? <>{currency.label}</> : <>Set Currency</>}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className="mt-4 border-t">
-          <StatusList setOpen={setOpen} setCurrency={setCurrency} />
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <SkeletonWrapper isLoading={isLoading}>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild disabled={isLoading}>
+          <Button variant="outline" className="w-full justify-start">
+            {currency ? <>{currency.label}</> : <>Set Currency</>}
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className="mt-4 border-t">
+            <CurrencyList setOpen={setOpen} setCurrency={setCurrency} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </SkeletonWrapper>
   );
 };
 
-function StatusList({
+function CurrencyList({
   setOpen,
   setCurrency,
 }: {
   setOpen: (open: boolean) => void;
-  setCurrency: (status: typeCurrency | null) => void;
+  setCurrency: (currency: typeCurrency | null) => void;
 }) {
   return (
     <Command>
-      <CommandInput placeholder="Filter status..." />
+      <CommandInput placeholder="Filter currencies..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
