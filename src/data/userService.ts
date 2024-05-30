@@ -31,6 +31,24 @@ class UserService {
       return null;
     }
   }
+
+  static async updateUserSettings(currency: string, userId: string) {
+    try {
+      const updatedSettings = await db.userSettings.update({
+        data: {
+          currency: currency,
+        },
+        where: {
+          userId: userId,
+        },
+      });
+
+      return updatedSettings;
+    } catch (error) {
+      console.error("Database Error - User Service");
+      return null;
+    }
+  }
 }
 
 export default UserService;

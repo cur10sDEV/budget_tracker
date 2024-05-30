@@ -17,10 +17,12 @@ import {
 } from "@/components/ui/popover";
 import { currencies } from "@/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { updateUserCurrency } from "@/server/actions/user";
 import { typeCurrency } from "@/types";
 import { UserSettings } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import SkeletonWrapper from "./loaders/SkeletonWrapper";
 
 const CurrencySelector = () => {
@@ -44,11 +46,31 @@ const CurrencySelector = () => {
     }
   }, [data]);
 
+  const { isPending, mutate } = useMutation({
+    mutationFn: updateUserCurrency,
+    mutationKey: ["updatedSettings"],
+    onError: () => toast.error("Something went wrong!"),
+    onSuccess: () => toast.success("Currency updated successfully 🎉!"),
+  });
+
+  useEffect(() => {
+    if (
+      !currency ||
+      currency?.value === null ||
+      !data ||
+      currency.value === data?.currency
+    ) {
+      return;
+    }
+
+    mutate(currency?.value);
+  }, [currency, mutate, data]);
+
   if (isDesktop) {
     return (
       <SkeletonWrapper isLoading={isLoading}>
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild disabled={isLoading}>
+          <PopoverTrigger asChild disabled={isLoading || isPending}>
             <Button variant="outline" className="w-full justify-start">
               {currency ? <>{currency.label}</> : <>Set Currency</>}
             </Button>
@@ -64,7 +86,7 @@ const CurrencySelector = () => {
   return (
     <SkeletonWrapper isLoading={isLoading}>
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild disabled={isLoading}>
+        <DrawerTrigger asChild disabled={isLoading || isPending}>
           <Button variant="outline" className="w-full justify-start">
             {currency ? <>{currency.label}</> : <>Set Currency</>}
           </Button>
