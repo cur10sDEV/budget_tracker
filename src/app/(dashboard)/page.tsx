@@ -1,4 +1,27 @@
-const DashboardPage = () => {
-  return <div>DashboardPage</div>;
+import Header from "@/components/shared/dashboard/Header";
+import UserService from "@/data/userService";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
+const DashboardPage = async () => {
+  const user = await currentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const userSettings = await UserService.getUserSettings(user.id);
+
+  if (!userSettings) {
+    redirect("/wizard");
+  }
+
+  return (
+    <div className="h-full bg-background">
+      <div className="border-b bg-card">
+        <Header firstName={user.firstName} />
+      </div>
+    </div>
+  );
 };
 export default DashboardPage;

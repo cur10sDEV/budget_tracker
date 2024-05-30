@@ -50,7 +50,7 @@ const CurrencySelector = () => {
     mutationFn: updateUserCurrency,
     mutationKey: ["updatedSettings"],
     onError: () => toast.error("Something went wrong!"),
-    onSuccess: () => toast.success("Currency updated successfully 🎉!"),
+    onSuccess: () => toast.success("Currency updated successfully 🎉"),
   });
 
   useEffect(() => {
