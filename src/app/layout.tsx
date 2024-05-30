@@ -1,4 +1,5 @@
-import ThemeProvider from "@/components/providers/ThemeProvider";
+import RootProvider from "@/components/providers/RootProvider";
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -21,7 +22,8 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
         <body className={inter.className}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <Toaster richColors position="top-right" />
+          <RootProvider>{children}</RootProvider>
         </body>
       </html>
     </ClerkProvider>
