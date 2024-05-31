@@ -12,10 +12,11 @@ import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { TransactionType } from "@/types";
 import { Category } from "@prisma/client";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useQuery } from "@tanstack/react-query";
-import { CheckIcon } from "lucide-react";
 import { useState } from "react";
+import CreateCategoryDialog from "../CreateCategoryDialog";
 import CategoryRow from "./CategoryRow";
 
 interface ICategoryPickerProps {
@@ -50,11 +51,13 @@ const CategoryPicker = ({ type }: ICategoryPickerProps) => {
           ) : (
             "Select category"
           )}
+          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Select category..." className="h-9" />
+          <CreateCategoryDialog type={type} />
           <CommandEmpty>Category not found.</CommandEmpty>
           <CommandGroup>
             {userCategories &&
