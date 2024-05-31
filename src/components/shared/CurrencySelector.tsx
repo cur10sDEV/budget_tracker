@@ -18,7 +18,7 @@ import {
 import { currencies } from "@/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { updateUserCurrency } from "@/server/actions/user";
-import { typeCurrency } from "@/types";
+import { Currency } from "@/types";
 import { UserSettings } from "@prisma/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ import SkeletonWrapper from "./loaders/SkeletonWrapper";
 const CurrencySelector = () => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [currency, setCurrency] = useState<typeCurrency | null>(null);
+  const [currency, setCurrency] = useState<Currency | null>(null);
 
   const { isLoading, data } = useQuery<UserSettings>({
     queryKey: ["userSettings"],
@@ -106,7 +106,7 @@ function CurrencyList({
   setCurrency,
 }: {
   setOpen: (open: boolean) => void;
-  setCurrency: (currency: typeCurrency | null) => void;
+  setCurrency: (currency: Currency | null) => void;
 }) {
   return (
     <Command>
