@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -25,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ReactNode, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import CategoryPicker from "./CategoryPicker";
+import DatePicker from "./DatePicker";
 
 interface ICreateTransactionDialogProps {
   trigger: ReactNode;
@@ -59,7 +61,7 @@ const CreateTransactionDialog = ({
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>
             Create a new{" "}
@@ -106,41 +108,55 @@ const CreateTransactionDialog = ({
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-2">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <CategoryPicker
-                        type={type}
-                        onChange={handleCategoryChange}
-                      />
-                    </FormControl>
-                    <FormDescription>Category of transaction</FormDescription>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transaction Date</FormLabel>
-                    <FormControl>
-                      {/* <Input type="date" {...field} /> */}
-                    </FormControl>
-                    <FormDescription>Date of transaction</FormDescription>
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <CategoryPicker
+                      type={type}
+                      onChange={handleCategoryChange}
+                    />
+                  </FormControl>
+                  <FormDescription>Category of transaction</FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Transaction Date</FormLabel>
+                  <DatePicker field={field} />
+                  <FormDescription>Select a date</FormDescription>
+                </FormItem>
+              )}
+            />
           </form>
         </Form>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => form.reset()}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              // disabled={isPending}
+              type="submit"
+            >
+              {/* {isPending ? <Loader2 className="animate-spin" /> : "Save"} */}
+              Save
+            </Button>
+          </DialogFooter>
         </DialogFooter>
       </DialogContent>
     </Dialog>
