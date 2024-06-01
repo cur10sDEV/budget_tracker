@@ -7,25 +7,35 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { TransactionType } from "@/types";
 import { Category } from "@prisma/client";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { PopoverContent } from "@radix-ui/react-popover";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import CategoryRow from "./CategoryRow";
 
 interface ICategoryPickerProps {
   type: TransactionType;
+  onChange: (value: string) => void;
 }
 
-const CategoryPicker = ({ type }: ICategoryPickerProps) => {
+const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+
+  useEffect(() => {
+    if (!value) return;
+    onChange(value);
+  }, [value, onChange]);
 
   const userCategories = useQuery<Category[]>({
     queryKey: ["userCategories", type],
@@ -36,6 +46,11 @@ const CategoryPicker = ({ type }: ICategoryPickerProps) => {
   const selectedCategory = userCategories.data?.find(
     (category) => category.name === value
   );
+
+  const successCallback = (category: Category) => {
+    setValue(category.name);
+    setOpen((prev) => !prev);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,35 +66,43 @@ const CategoryPicker = ({ type }: ICategoryPickerProps) => {
           ) : (
             "Select category"
           )}
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Select category..." className="h-9" />
-          <CreateCategoryDialog type={type} />
-          <CommandEmpty>Category not found.</CommandEmpty>
+        <Command onSubmit={(e) => e.preventDefault()}>
+          <CommandInput placeholder="Select category..." />
+          <CreateCategoryDialog type={type} successCallback={successCallback} />
+          <CommandEmpty>
+            <p>Category not found</p>
+            <p className="tex-muted-foreground text-xs">
+              Tip: Create a new category
+            </p>
+          </CommandEmpty>
           <CommandGroup>
-            {userCategories &&
-              userCategories.data &&
-              userCategories.data.map((category) => (
-                <CommandItem
-                  key={category.name}
-                  value={category.name}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {category.name}
-                  <CheckIcon
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      value === category.name ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
+            <CommandList>
+              {userCategories &&
+                userCategories.data &&
+                userCategories.data.map((category) => (
+                  <CommandItem
+                    key={category.name}
+                    value={category.name}
+                    onSelect={() => {
+                      setValue(category.name);
+                      setOpen((prev) => !prev);
+                    }}
+                    className="flex justify-between"
+                  >
+                    <CategoryRow category={category} />
+                    <Check
+                      className={cn(
+                        "mr-2 size-4 opacity-0",
+                        value === category.name && "opacity-100"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+            </CommandList>
           </CommandGroup>
         </Command>
       </PopoverContent>

@@ -19,6 +19,34 @@ class CategoryService {
       return null;
     }
   }
+
+  static async createTransactionCategory({
+    name,
+    icon,
+    type,
+    userId,
+  }: {
+    name: string;
+    icon: string;
+    type: string;
+    userId: string;
+  }) {
+    try {
+      const createdCategory = await db.category.create({
+        data: {
+          userId,
+          name,
+          type,
+          icon,
+        },
+      });
+
+      return createdCategory;
+    } catch (error) {
+      console.error("Database Error - Category Service");
+      return null;
+    }
+  }
 }
 
 export default CategoryService;

@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { transactionSchema } from "@/schemas/transaction";
 import { TransactionSchema, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import CategoryPicker from "./CategoryPicker";
 
@@ -48,6 +48,13 @@ const CreateTransactionDialog = ({
   const onSubmit = async (values: TransactionSchema) => {
     console.log(values);
   };
+
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      form.setValue("category", value);
+    },
+    [form]
+  );
 
   return (
     <Dialog>
@@ -107,7 +114,10 @@ const CreateTransactionDialog = ({
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <CategoryPicker type={type} />
+                      <CategoryPicker
+                        type={type}
+                        onChange={handleCategoryChange}
+                      />
                     </FormControl>
                     <FormDescription>Category of transaction</FormDescription>
                   </FormItem>
