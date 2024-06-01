@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
     const userCategories = await CategoryService.getUserCategories(
       user.id,
-      data.type
+      data
     );
 
     return Response.json(userCategories);
