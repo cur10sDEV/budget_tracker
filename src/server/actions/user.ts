@@ -8,19 +8,25 @@ import { redirect } from "next/navigation";
 
 export const updateUserCurrency = async (inputCurrency: string) => {
   try {
-    const { data } = validator(userSettingsSchema, { currency: inputCurrency });
-
     const user = await currentUser();
+
     if (!user) {
       redirect("/sign-in");
     }
 
-    const updatedUserSettings = await UserService.updateUserSettings(
-      data.currency,
-      user.id
-    );
+    const validatedFields = validator(userSettingsSchema, {
+      currency: inputCurrency,
+    });
 
-    return updatedUserSettings;
+    if (validatedFields && validatedFields.data) {
+      const { data } = validatedFields;
+      const updatedUserSettings = await UserService.updateUserSettings(
+        data.currency,
+        user.id
+      );
+
+      return updatedUserSettings;
+    }
   } catch (error) {
     console.error(error);
   }
