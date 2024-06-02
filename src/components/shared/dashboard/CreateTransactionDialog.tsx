@@ -19,12 +19,16 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn, dateToUTCDate } from "@/lib/utils";
 import { transactionSchema } from "@/schemas/transaction";
+import { createTransaction } from "@/server/actions/transactions";
 import { TransactionSchema, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { ReactNode, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import CategoryPicker from "./CategoryPicker";
 import DatePicker from "./DatePicker";
 
@@ -37,6 +41,8 @@ const CreateTransactionDialog = ({
   trigger,
   type,
 }: ICreateTransactionDialogProps) => {
+  const [open, setOpen] = useState(false);
+
   const form = useForm<TransactionSchema>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -47,8 +53,42 @@ const CreateTransactionDialog = ({
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createTransaction,
+    onSuccess: () => {
+      toast.success("Transaction created Successfully 🎉", {
+        id: "create-transaction",
+      });
+
+      form.reset({
+        amount: 0,
+        category: undefined,
+        date: new Date(),
+        description: "",
+        type,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["overview"],
+      });
+
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong!", {
+        id: "create-transaction",
+      });
+    },
+  });
+
   const onSubmit = async (values: TransactionSchema) => {
-    console.log(values);
+    toast.loading("Creating transaction...", {
+      id: "create-transaction",
+    });
+
+    mutate({ ...values, date: dateToUTCDate(values.date) });
   };
 
   const handleCategoryChange = useCallback(
@@ -59,7 +99,7 @@ const CreateTransactionDialog = ({
   );
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
@@ -150,11 +190,10 @@ const CreateTransactionDialog = ({
             </DialogClose>
             <Button
               onClick={form.handleSubmit(onSubmit)}
-              // disabled={isPending}
+              disabled={isPending}
               type="submit"
             >
-              {/* {isPending ? <Loader2 className="animate-spin" /> : "Save"} */}
-              Save
+              {isPending ? <Loader2 className="animate-spin" /> : "Save"}
             </Button>
           </DialogFooter>
         </DialogFooter>

@@ -49,7 +49,10 @@ const DatePicker = ({ field }: IDatePickerProps) => {
         <Calendar
           mode="single"
           selected={field.value}
-          onSelect={field.onChange}
+          onSelect={(value) => {
+            if (!value) return;
+            field.onChange(value);
+          }}
           disabled={(date) =>
             date > new Date() || date < new Date("1900-01-01")
           }
