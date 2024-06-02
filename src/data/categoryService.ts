@@ -47,6 +47,22 @@ class CategoryService {
       return null;
     }
   }
+
+  static async getAUserCategoryByName(userId: string, name: string) {
+    try {
+      const category = await db.category.findFirst({
+        where: {
+          userId,
+          name,
+        },
+      });
+
+      return category;
+    } catch (error) {
+      console.error("Database Error - Category Service");
+      return null;
+    }
+  }
 }
 
 export default CategoryService;

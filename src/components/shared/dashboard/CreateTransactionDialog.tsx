@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -18,13 +19,18 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn, dateToUTCDate } from "@/lib/utils";
 import { transactionSchema } from "@/schemas/transaction";
+import { createTransaction } from "@/server/actions/transactions";
 import { TransactionSchema, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReactNode, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { ReactNode, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import CategoryPicker from "./CategoryPicker";
+import DatePicker from "./DatePicker";
 
 interface ICreateTransactionDialogProps {
   trigger: ReactNode;
@@ -35,6 +41,8 @@ const CreateTransactionDialog = ({
   trigger,
   type,
 }: ICreateTransactionDialogProps) => {
+  const [open, setOpen] = useState(false);
+
   const form = useForm<TransactionSchema>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -45,8 +53,42 @@ const CreateTransactionDialog = ({
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createTransaction,
+    onSuccess: () => {
+      toast.success("Transaction created Successfully 🎉", {
+        id: "create-transaction",
+      });
+
+      form.reset({
+        amount: 0,
+        category: undefined,
+        date: new Date(),
+        description: "",
+        type,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["overview"],
+      });
+
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong!", {
+        id: "create-transaction",
+      });
+    },
+  });
+
   const onSubmit = async (values: TransactionSchema) => {
-    console.log(values);
+    toast.loading("Creating transaction...", {
+      id: "create-transaction",
+    });
+
+    mutate({ ...values, date: dateToUTCDate(values.date) });
   };
 
   const handleCategoryChange = useCallback(
@@ -57,9 +99,9 @@ const CreateTransactionDialog = ({
   );
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>
             Create a new{" "}
@@ -106,41 +148,54 @@ const CreateTransactionDialog = ({
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-2">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <CategoryPicker
-                        type={type}
-                        onChange={handleCategoryChange}
-                      />
-                    </FormControl>
-                    <FormDescription>Category of transaction</FormDescription>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transaction Date</FormLabel>
-                    <FormControl>
-                      {/* <Input type="date" {...field} /> */}
-                    </FormControl>
-                    <FormDescription>Date of transaction</FormDescription>
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <CategoryPicker
+                      type={type}
+                      onChange={handleCategoryChange}
+                    />
+                  </FormControl>
+                  <FormDescription>Category of transaction</FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Transaction Date</FormLabel>
+                  <DatePicker field={field} />
+                  <FormDescription>Select a date</FormDescription>
+                </FormItem>
+              )}
+            />
           </form>
         </Form>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => form.reset()}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isPending}
+              type="submit"
+            >
+              {isPending ? <Loader2 className="animate-spin" /> : "Save"}
+            </Button>
+          </DialogFooter>
         </DialogFooter>
       </DialogContent>
     </Dialog>

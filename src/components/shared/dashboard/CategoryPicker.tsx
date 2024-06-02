@@ -59,7 +59,7 @@ const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
           {selectedCategory ? (
             <CategoryRow category={selectedCategory} />
@@ -69,7 +69,7 @@ const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="p-0">
         <Command onSubmit={(e) => e.preventDefault()}>
           <CommandInput placeholder="Select category..." />
           <CreateCategoryDialog type={type} successCallback={successCallback} />
