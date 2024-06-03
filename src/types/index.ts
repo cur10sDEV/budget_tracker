@@ -1,5 +1,6 @@
 import { currencies } from "@/constants";
 import { categorySchema } from "@/schemas/category";
+import { dateRangeSchema } from "@/schemas/date";
 import {
   transactionSchema,
   transactionTypeSchema,
@@ -13,3 +14,5 @@ export type TransactionType = z.infer<typeof transactionTypeSchema>;
 export type TransactionSchema = z.infer<typeof transactionSchema>;
 
 export type CategorySchema = z.infer<typeof categorySchema>;
+
+export type DateRangeSchema = z.infer<typeof dateRangeSchema>;

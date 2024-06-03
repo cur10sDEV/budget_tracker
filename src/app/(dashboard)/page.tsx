@@ -1,4 +1,5 @@
 import Header from "@/components/shared/dashboard/Header";
+import Overview from "@/components/shared/dashboard/Overview";
 import UserService from "@/data/userService";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -21,6 +22,7 @@ const DashboardPage = async () => {
       <div className="border-b bg-card">
         <Header firstName={user.firstName} />
       </div>
+      <Overview userSettings={userSettings} />
     </div>
   );
 };
