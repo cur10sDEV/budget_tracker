@@ -31,7 +31,7 @@ export const createTransaction = async (formData: TransactionSchema) => {
         throw new Error("Category not found!");
       }
 
-      // db $transaction to perform to write operations - new transaction and update aggregate tables
+      // db $transaction to perform write operations - new transaction and update aggregate tables
 
       await db.$transaction([
         db.transaction.create({

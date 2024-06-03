@@ -26,3 +26,5 @@ export const currencies = [
   { value: "HKD", label: "HK$ Hong Kong Dollar", locale: "en-hk" },
   { value: "TRY", label: "₺ Turkish Lira", locale: "tr-tr" },
 ];
+
+export const MAX_DATE_RANGE_DAYS = 90;
