@@ -6,7 +6,7 @@ import { UserSettings } from "@prisma/client";
 import { differenceInDays, startOfMonth } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
-import Stats from "./Stats";
+import MoneyStats from "./stats/money/MoneyStats";
 
 interface IOverviewProps {
   userSettings: UserSettings;
@@ -42,7 +42,7 @@ const Overview = ({ userSettings }: IOverviewProps) => {
           />
         </div>
       </div>
-      <Stats
+      <MoneyStats
         userSettings={userSettings}
         from={dateRange.from}
         to={dateRange.to}

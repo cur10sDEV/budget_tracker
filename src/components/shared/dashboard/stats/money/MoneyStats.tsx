@@ -3,8 +3,8 @@ import { UserSettings } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useMemo } from "react";
-import SkeletonWrapper from "../loaders/SkeletonWrapper";
-import StatCard from "./StatCard";
+import SkeletonWrapper from "../../../loaders/SkeletonWrapper";
+import StatCard from "./MoneyStatCard";
 
 interface IStatsProps {
   userSettings: UserSettings;
