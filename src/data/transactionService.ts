@@ -26,6 +26,34 @@ class TransactionService {
       return null;
     }
   }
+
+  static async getUserCategoryStats(userId: string, from: Date, to: Date) {
+    try {
+      const stats = await db.transaction.groupBy({
+        by: ["type", "category", "categoryIcon"],
+        where: {
+          userId,
+          date: {
+            gte: from,
+            lte: to,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+        orderBy: {
+          _sum: {
+            amount: "desc",
+          },
+        },
+      });
+
+      return stats;
+    } catch (error) {
+      console.error("Database Error - Transaction Service");
+      return null;
+    }
+  }
 }
 
 export default TransactionService;
