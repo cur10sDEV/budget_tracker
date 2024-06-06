@@ -3,20 +3,20 @@ import { UserSettings } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useMemo } from "react";
-import SkeletonWrapper from "../loaders/SkeletonWrapper";
-import StatCard from "./StatCard";
+import SkeletonWrapper from "../../../loaders/SkeletonWrapper";
+import MoneyStatCard from "./MoneyStatCard";
 
-interface IStatsProps {
+interface IMoneyStatsProps {
   userSettings: UserSettings;
   from: Date;
   to: Date;
 }
-const Stats = ({ userSettings, from, to }: IStatsProps) => {
+const MoneyStats = ({ userSettings, from, to }: IMoneyStatsProps) => {
   const { data, isFetching } = useQuery<{ income: number; expense: number }>({
     queryKey: ["overview", "stats", from, to],
     queryFn: () =>
       fetch(
-        `/api/stats?from=${dateToUTCDate(from)}&to=${dateToUTCDate(to)}`
+        `/api/stats/balance?from=${dateToUTCDate(from)}&to=${dateToUTCDate(to)}`
       ).then((res) => res.json()),
   });
 
@@ -29,9 +29,9 @@ const Stats = ({ userSettings, from, to }: IStatsProps) => {
   const balance = income - expense;
 
   return (
-    <div className="container flex flex-wrap w-full gap-2 md:flex-nowrap">
+    <div className="flex flex-wrap w-full gap-2 md:flex-nowrap">
       <SkeletonWrapper isLoading={isFetching}>
-        <StatCard
+        <MoneyStatCard
           formatter={formatter}
           value={income}
           title="Income"
@@ -41,7 +41,7 @@ const Stats = ({ userSettings, from, to }: IStatsProps) => {
         />
       </SkeletonWrapper>
       <SkeletonWrapper isLoading={isFetching}>
-        <StatCard
+        <MoneyStatCard
           formatter={formatter}
           value={expense}
           title="Expense"
@@ -52,7 +52,7 @@ const Stats = ({ userSettings, from, to }: IStatsProps) => {
       </SkeletonWrapper>
 
       <SkeletonWrapper isLoading={isFetching}>
-        <StatCard
+        <MoneyStatCard
           formatter={formatter}
           value={balance}
           title="Balance"
@@ -64,4 +64,4 @@ const Stats = ({ userSettings, from, to }: IStatsProps) => {
     </div>
   );
 };
-export default Stats;
+export default MoneyStats;

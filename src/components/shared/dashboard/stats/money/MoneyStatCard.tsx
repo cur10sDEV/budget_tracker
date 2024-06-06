@@ -2,13 +2,18 @@ import { Card } from "@/components/ui/card";
 import { ReactNode, useCallback } from "react";
 import CountUp from "react-countup";
 
-interface IStatCardProps {
+interface IMoneyStatCardProps {
   value: number;
   icon: ReactNode;
   title: string;
   formatter: Intl.NumberFormat;
 }
-const StatCard = ({ formatter, icon, title, value }: IStatCardProps) => {
+const MoneyStatCard = ({
+  formatter,
+  icon,
+  title,
+  value,
+}: IMoneyStatCardProps) => {
   const formatFn = useCallback(
     (value: number) => {
       return formatter.format(value);
@@ -32,4 +37,4 @@ const StatCard = ({ formatter, icon, title, value }: IStatCardProps) => {
     </Card>
   );
 };
-export default StatCard;
+export default MoneyStatCard;

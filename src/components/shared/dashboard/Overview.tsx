@@ -6,7 +6,8 @@ import { UserSettings } from "@prisma/client";
 import { differenceInDays, startOfMonth } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
-import Stats from "./Stats";
+import CategoryStats from "./stats/category/CategoryStats";
+import MoneyStats from "./stats/money/MoneyStats";
 
 interface IOverviewProps {
   userSettings: UserSettings;
@@ -42,11 +43,18 @@ const Overview = ({ userSettings }: IOverviewProps) => {
           />
         </div>
       </div>
-      <Stats
-        userSettings={userSettings}
-        from={dateRange.from}
-        to={dateRange.to}
-      />
+      <div className="container flex flex-col gap-2">
+        <MoneyStats
+          userSettings={userSettings}
+          from={dateRange.from}
+          to={dateRange.to}
+        />
+        <CategoryStats
+          userSettings={userSettings}
+          from={dateRange.from}
+          to={dateRange.to}
+        />
+      </div>
     </>
   );
 };
