@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GetMonthHistoryPeriods, Period, Timeframe } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import SkeletonWrapper from "../../loaders/SkeletonWrapper";
+import MonthSelector from "./MonthSelector";
 import YearSelector from "./YearSelector";
 
 interface IHistoryPeriodSelector {
@@ -19,7 +20,7 @@ const HistoryPeriodSelector = ({
 }: IHistoryPeriodSelector) => {
   const { data, isFetching } = useQuery<GetMonthHistoryPeriods>({
     queryKey: ["overview", "history", "periods"],
-    queryFn: () => fetch("/api/history").then((res) => res.json()),
+    queryFn: () => fetch("/api/history/periods").then((res) => res.json()),
   });
   return (
     <div className="flex flex-wrap items-center gap-4">
@@ -35,13 +36,18 @@ const HistoryPeriodSelector = ({
         </Tabs>
       </SkeletonWrapper>
       <div className="flex flex-wrap items-center gap-2">
-        <SkeletonWrapper isLoading={isFetching}>
+        <SkeletonWrapper isLoading={isFetching} fullWidth={false}>
           <YearSelector
             period={period}
             setPeriod={setPeriod}
             years={data || []}
           />
         </SkeletonWrapper>
+        {timeframe === "month" && (
+          <SkeletonWrapper isLoading={isFetching} fullWidth={false}>
+            <MonthSelector period={period} setPeriod={setPeriod} />
+          </SkeletonWrapper>
+        )}
       </div>
     </div>
   );

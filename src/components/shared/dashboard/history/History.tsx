@@ -1,11 +1,13 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Period, Timeframe } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HistoryData, Period, Timeframe } from "@/types";
 import { UserSettings } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import HistoryPeriodSelector from "./HistoryPeriodSelector";
+import Chart from "./charts/Chart";
 
 interface IHistoryProps {
   userSettings: UserSettings;
@@ -15,6 +17,14 @@ const History = ({ userSettings }: IHistoryProps) => {
   const [period, setPeriod] = useState<Period>({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
+  });
+
+  const { data, isFetching } = useQuery<HistoryData[]>({
+    queryKey: ["overview", "history", timeframe, period],
+    queryFn: () =>
+      fetch(
+        `/api/history/data?timeframe=${timeframe}&month=${period.month}&year=${period.year}`
+      ).then((res) => res.json()),
   });
 
   return (
@@ -48,6 +58,14 @@ const History = ({ userSettings }: IHistoryProps) => {
             </div>
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          <Chart
+            data={data}
+            isFetching={isFetching}
+            timeframe={timeframe}
+            userSettings={userSettings}
+          />
+        </CardContent>
       </Card>
     </div>
   );
