@@ -1,4 +1,5 @@
 import Header from "@/components/shared/dashboard/Header";
+import History from "@/components/shared/dashboard/history/History";
 import Overview from "@/components/shared/dashboard/Overview";
 import UserService from "@/data/userService";
 import { currentUser } from "@clerk/nextjs/server";
@@ -23,6 +24,7 @@ const DashboardPage = async () => {
         <Header firstName={user.firstName} />
       </div>
       <Overview userSettings={userSettings} />
+      <History userSettings={userSettings} />
     </div>
   );
 };
