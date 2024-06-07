@@ -1,4 +1,5 @@
 import { currencies } from "@/constants";
+import MonthHistory from "@/data/monthHistory";
 import TransactionService from "@/data/transactionService";
 import { categorySchema } from "@/schemas/category";
 import { dateRangeSchema } from "@/schemas/date";
@@ -20,4 +21,12 @@ export type DateRangeSchema = z.infer<typeof dateRangeSchema>;
 
 export type GetUserCategoryStats = Awaited<
   ReturnType<typeof TransactionService.getUserCategoryStats>
+>;
+
+export type Timeframe = "month" | "year";
+
+export type Period = { month: number; year: number };
+
+export type GetMonthHistoryPeriods = Awaited<
+  ReturnType<typeof MonthHistory.getHistoryPeriods>
 >;
