@@ -1,5 +1,5 @@
 import Header from "@/components/shared/dashboard/Header";
-import History from "@/components/shared/dashboard/History";
+import History from "@/components/shared/dashboard/history/History";
 import Overview from "@/components/shared/dashboard/Overview";
 import UserService from "@/data/userService";
 import { currentUser } from "@clerk/nextjs/server";

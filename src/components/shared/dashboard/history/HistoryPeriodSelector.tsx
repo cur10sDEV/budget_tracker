@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GetMonthHistoryPeriods, Period, Timeframe } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import SkeletonWrapper from "../loaders/SkeletonWrapper";
+import SkeletonWrapper from "../../loaders/SkeletonWrapper";
 import YearSelector from "./YearSelector";
 
 interface IHistoryPeriodSelector {
