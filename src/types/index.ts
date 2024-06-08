@@ -1,7 +1,7 @@
 import { currencies } from "@/constants";
 import MonthHistoryService from "@/data/monthHistoryService";
 import TransactionService from "@/data/transactionService";
-import { categorySchema } from "@/schemas/category";
+import { categorySchema, deleteCategorySchema } from "@/schemas/category";
 import { dateRangeSchema } from "@/schemas/date";
 import { queryHistoryDataSchema } from "@/schemas/history";
 import {
@@ -17,6 +17,8 @@ export type TransactionType = z.infer<typeof transactionTypeSchema>;
 export type TransactionSchema = z.infer<typeof transactionSchema>;
 
 export type CategorySchema = z.infer<typeof categorySchema>;
+
+export type DeleteCategorySchema = z.infer<typeof deleteCategorySchema>;
 
 export type DateRangeSchema = z.infer<typeof dateRangeSchema>;
 

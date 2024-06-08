@@ -14,7 +14,7 @@ interface ICategoryListProps {
   type: TransactionType;
 }
 const CategoryList = ({ type }: ICategoryListProps) => {
-  const { data, isFetching, refetch } = useQuery<Category[]>({
+  const { data, isLoading, refetch } = useQuery<Category[]>({
     queryKey: ["categories", type],
     queryFn: () =>
       fetch(`/api/user/categories?type=${type}`).then((res) => res.json()),
@@ -23,7 +23,7 @@ const CategoryList = ({ type }: ICategoryListProps) => {
   const isDataAvailable = data && data.length > 0;
 
   return (
-    <SkeletonWrapper isLoading={isFetching}>
+    <SkeletonWrapper isLoading={isLoading}>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between gap-2">

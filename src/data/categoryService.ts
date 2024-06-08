@@ -1,4 +1,5 @@
 import db from "@/lib/prisma/db";
+import { TransactionType } from "@/types";
 
 class CategoryService {
   static async getUserCategories(userId: string, type: string | null) {
@@ -54,6 +55,29 @@ class CategoryService {
         where: {
           userId,
           name,
+        },
+      });
+
+      return category;
+    } catch (error) {
+      console.error("Database Error - Category Service");
+      return null;
+    }
+  }
+
+  static async deleteCategory(
+    userId: string,
+    type: TransactionType,
+    name: string
+  ) {
+    try {
+      const category = await db.category.delete({
+        where: {
+          name_type_userId: {
+            userId,
+            name,
+            type,
+          },
         },
       });
 

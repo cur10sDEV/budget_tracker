@@ -9,3 +9,8 @@ export const categorySchema = z.object({
   icon: z.string().max(20),
   type: transactionTypeSchema,
 });
+
+export const deleteCategorySchema = z.object({
+  name: z.string().min(3).max(25),
+  type: transactionTypeSchema,
+});

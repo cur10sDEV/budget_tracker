@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Category } from "@prisma/client";
 import { TrashIcon } from "lucide-react";
+import DeleteCategoryDialog from "./DeleteCategoryDialog";
 
 interface ICategoryCardProps {
   category: Category;
@@ -14,12 +15,17 @@ const CategoryCard = ({ category }: ICategoryCardProps) => {
         </span>
         <span>{category.name}</span>
       </div>
-      <Button
-        className="flex border-separate w-full items-center gap-2 rounded-t-none text-muted-foreground hover:bg-red-500/20"
-        variant="secondary"
-      >
-        <TrashIcon className="size-4" />
-      </Button>
+      <DeleteCategoryDialog
+        category={category}
+        trigger={
+          <Button
+            className="flex border-separate w-full items-center gap-2 rounded-t-none text-muted-foreground hover:bg-red-500/20"
+            variant="secondary"
+          >
+            <TrashIcon className="size-4" />
+          </Button>
+        }
+      />
     </div>
   );
 };
