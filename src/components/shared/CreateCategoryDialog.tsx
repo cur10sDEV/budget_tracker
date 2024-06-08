@@ -23,7 +23,7 @@ import { Category } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircleOff, Loader2, PlusSquare } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -40,10 +40,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 interface ICreateCategoryDialogProps {
   type: TransactionType;
   successCallback: (category: Category) => void;
+  trigger?: ReactNode;
 }
 const CreateCategoryDialog = ({
   type,
   successCallback,
+  trigger,
 }: ICreateCategoryDialogProps) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -101,15 +103,19 @@ const CreateCategoryDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="flex border-separate items-center justify-start rounded-none border-b p-3 text-muted-foreground"
-        >
-          <PlusSquare className="mr-2 size-4" />
-          <span>Create New</span>
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="flex border-separate items-center justify-start rounded-none border-b p-3 text-muted-foreground"
+          >
+            <PlusSquare className="mr-2 size-4" />
+            <span>Create New</span>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
