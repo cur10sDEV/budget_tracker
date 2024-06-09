@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const Manage = () => {
+const ManagePage = () => {
   return (
     <>
       {/* HEADER */}
@@ -43,4 +43,4 @@ const Manage = () => {
     </>
   );
 };
-export default Manage;
+export default ManagePage;

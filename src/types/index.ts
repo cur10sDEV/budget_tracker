@@ -43,3 +43,17 @@ export type HistoryData = {
   month: number;
   day?: number;
 };
+
+export type TransactionHistory = {
+  formattedAmount: string;
+  id: string;
+  amount: number;
+  description: string;
+  date: Date;
+  userId: string;
+  type: string;
+  category: string;
+  categoryIcon: string;
+  createdAt: Date;
+  updatedAt: Date;
+}[];
