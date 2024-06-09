@@ -7,8 +7,8 @@ class TransactionService {
         where: {
           userId,
           date: {
-            lte: from,
-            gte: to,
+            lte: to,
+            gte: from,
           },
         },
         orderBy: {
