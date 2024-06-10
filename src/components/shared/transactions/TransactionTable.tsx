@@ -23,6 +23,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { download, generateCsv, mkConfig } from "export-to-csv";
+import { DownloadIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import SkeletonWrapper from "../loaders/SkeletonWrapper";
 import { ColumnHeader } from "./ColumnHeader";
@@ -103,6 +105,12 @@ const columns: ColumnDef<row>[] = [
   },
 ];
 
+const csvConfig = mkConfig({
+  fieldSeparator: ",",
+  decimalSeparator: ".",
+  useKeysAsHeaders: true,
+});
+
 const TransactionTable = ({ from, to }: ITransactionTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -116,6 +124,11 @@ const TransactionTable = ({ from, to }: ITransactionTableProps) => {
         )}&to=${dateToUTCDate(to)}`
       ).then((res) => res.json()),
   });
+
+  const handleExportCsv = (data: any[]) => {
+    const csv = generateCsv(csvConfig)(data);
+    download(csvConfig)(csv);
+  };
 
   const table = useReactTable({
     data: data || emptyData,
@@ -168,6 +181,26 @@ const TransactionTable = ({ from, to }: ITransactionTableProps) => {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto h-8 lg:flex"
+            onClick={() => {
+              const data = table.getFilteredRowModel().rows.map((row) => ({
+                category: row.original.category,
+                categoryIcon: row.original.categoryIcon,
+                description: row.original.description,
+                type: row.original.type,
+                amount: row.original.amount,
+                formattedAmount: row.original.formattedAmount,
+                date: row.original.date,
+              }));
+              handleExportCsv(data);
+            }}
+          >
+            <DownloadIcon className="mr-2 size-4" />
+            Export CSV
+          </Button>
           <ColumnToggle table={table} />
         </div>
       </div>
