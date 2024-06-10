@@ -29,6 +29,7 @@ import { useMemo, useState } from "react";
 import SkeletonWrapper from "../loaders/SkeletonWrapper";
 import { ColumnHeader } from "./ColumnHeader";
 import { ColumnToggle } from "./ColumnToggle";
+import RowActions from "./RowActions";
 import { TableFilter } from "./TableFilter";
 
 interface ITransactionTableProps {
@@ -102,6 +103,12 @@ const columns: ColumnDef<row>[] = [
         {row.original.formattedAmount}
       </p>
     ),
+  },
+  {
+    accessorKey: "actions",
+    header: () => null,
+    enableHiding: false,
+    cell: ({ row }) => <RowActions transaction={row.original} />,
   },
 ];
 

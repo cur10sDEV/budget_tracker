@@ -1,6 +1,22 @@
 import db from "@/lib/prisma/db";
 
 class TransactionService {
+  static async getUserTransactionById(id: string, userId: string) {
+    try {
+      const transaction = await db.transaction.findUnique({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      return transaction;
+    } catch (error) {
+      console.error("Database Error - Transaction Service");
+      return null;
+    }
+  }
+
   static async getTransactionsWithin(userId: string, from: Date, to: Date) {
     try {
       const transactions = await db.transaction.findMany({
