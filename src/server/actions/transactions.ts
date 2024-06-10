@@ -1,6 +1,7 @@
 "use server";
 
 import CategoryService from "@/data/categoryService";
+import TransactionService from "@/data/transactionService";
 import db from "@/lib/prisma/db";
 import { validator } from "@/lib/zod/validator";
 import { transactionSchema } from "@/schemas/transaction";
@@ -31,7 +32,7 @@ export const createTransaction = async (formData: TransactionSchema) => {
         throw new Error("Category not found!");
       }
 
-      // db $transaction to perform write operations - new transaction and update aggregate tables
+      // db $transaction to perform multiple operations - new transaction and update aggregate tables
 
       await db.$transaction([
         db.transaction.create({
@@ -100,4 +101,73 @@ export const createTransaction = async (formData: TransactionSchema) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const deleteTransaction = async (id: string) => {
+  const user = await currentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const transaction = await TransactionService.getUserTransactionById(
+    id,
+    user.id
+  );
+
+  if (!transaction) {
+    throw new Error("Bad Request - Transaction not found!");
+  }
+
+  await db.$transaction([
+    db.transaction.delete({
+      where: {
+        id: transaction.id,
+        userId: user.id,
+      },
+    }),
+    db.monthHistory.update({
+      where: {
+        day_month_year_userId: {
+          userId: user.id,
+          day: transaction.date.getUTCDate(),
+          month: transaction.date.getUTCMonth(),
+          year: transaction.date.getUTCFullYear(),
+        },
+      },
+      data: {
+        ...(transaction.type === "expense" && {
+          expense: {
+            decrement: transaction.amount,
+          },
+        }),
+        ...(transaction.type === "income" && {
+          income: {
+            decrement: transaction.amount,
+          },
+        }),
+      },
+    }),
+    db.yearHistory.update({
+      where: {
+        month_year_userId: {
+          userId: user.id,
+          month: transaction.date.getUTCMonth(),
+          year: transaction.date.getUTCFullYear(),
+        },
+      },
+      data: {
+        ...(transaction.type === "expense" && {
+          expense: {
+            decrement: transaction.amount,
+          },
+        }),
+        ...(transaction.type === "income" && {
+          income: {
+            decrement: transaction.amount,
+          },
+        }),
+      },
+    }),
+  ]);
 };
