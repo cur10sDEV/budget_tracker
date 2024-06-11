@@ -5,8 +5,8 @@ import CountUp from "react-countup";
 
 interface ICustomTooltipProps {
   userSettings: UserSettings;
-  active: any;
-  payload: any;
+  active?: any;
+  payload?: any;
 }
 
 const CustomTooltip = ({
