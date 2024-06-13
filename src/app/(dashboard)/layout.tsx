@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
+    // startupImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -41,6 +41,9 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+  },
+  icons: {
+    icon: "/favicon.svg",
   },
 };
 
