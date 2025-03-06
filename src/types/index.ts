@@ -8,6 +8,7 @@ import {
   transactionSchema,
   transactionTypeSchema,
 } from "@/schemas/transaction";
+import { getUserInsights } from "@/server/actions/insights";
 import { z } from "zod";
 
 export type Currency = (typeof currencies)[0];
@@ -57,3 +58,5 @@ export type TransactionHistory = {
   createdAt: Date;
   updatedAt: Date;
 }[];
+
+export type FinancialSummary = Awaited<ReturnType<typeof getUserInsights>>;
