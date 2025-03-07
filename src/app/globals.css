@@ -75,28 +75,41 @@
   }
 }
 
+@layer base {
+  img {
+    display: initial;
+  }
+}
+
 .report-container {
-  max-width: 800px;
-  margin: 20px auto;
+  margin: auto 20px;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
-h1,
+.report-container > h1,
 h2 {
-  color: #2c3e50;
+  margin: 0.5rem auto;
 }
 
-ul {
+.report-container > h3 {
+  margin: 1rem auto 0.5rem auto;
+}
+
+.report-container > p {
+  margin: 1rem auto 0.5rem auto;
+}
+
+.report-container > ul {
   list-style-type: none;
   padding-left: 20px;
 }
 
-li {
+.report-container > li {
   margin-bottom: 5px;
 }
 
-code {
+.report-container > code {
   background-color: #f0f0f0;
   padding: 2px 5px;
   border-radius: 3px;
