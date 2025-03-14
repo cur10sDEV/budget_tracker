@@ -3,6 +3,7 @@ import { UserSettings } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useMemo } from "react";
+import { toast } from "sonner";
 import SkeletonWrapper from "../../../loaders/SkeletonWrapper";
 import MoneyStatCard from "./MoneyStatCard";
 
@@ -17,7 +18,15 @@ const MoneyStats = ({ userSettings, from, to }: IMoneyStatsProps) => {
     queryFn: () =>
       fetch(
         `/api/stats/balance?from=${dateToUTCDate(from)}&to=${dateToUTCDate(to)}`
-      ).then((res) => res.json()),
+      ).then(async (res) => {
+        const data = await res.json();
+        if (data.expense > data.income) {
+          toast.warning(`Your Expenses are greater than your Income`, {
+            duration: 5000,
+          });
+        }
+        return data;
+      }),
   });
 
   const formatter = useMemo(() => {
