@@ -12,6 +12,7 @@ interface IMoneyStatsProps {
   from: Date;
   to: Date;
 }
+
 const MoneyStats = ({ userSettings, from, to }: IMoneyStatsProps) => {
   const { data, isFetching } = useQuery<{ income: number; expense: number }>({
     queryKey: ["overview", "stats", from, to],
@@ -49,6 +50,7 @@ const MoneyStats = ({ userSettings, from, to }: IMoneyStatsProps) => {
           }
         />
       </SkeletonWrapper>
+
       <SkeletonWrapper isLoading={isFetching}>
         <MoneyStatCard
           formatter={formatter}

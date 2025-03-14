@@ -68,7 +68,7 @@ class TransactionService {
   static async getUserCategoryStats(userId: string, from: Date, to: Date) {
     try {
       const stats = await db.transaction.groupBy({
-        by: ["type", "category", "categoryIcon"],
+        by: ["type", "categoryName", "categoryIcon"],
         where: {
           userId,
           date: {
@@ -85,6 +85,24 @@ class TransactionService {
           },
         },
       });
+
+      return stats;
+    } catch (error) {
+      console.error("Database Error - Transaction Service");
+      return null;
+    }
+  }
+
+  static async getAUserCategoryStatsById(userId: string, categoryId: string) {
+    try {
+      const stats = await db.transaction.findMany({
+        where: {
+          userId,
+          categoryId,
+        },
+      });
+
+      console.log({ stats });
 
       return stats;
     } catch (error) {

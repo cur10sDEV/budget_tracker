@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { categorySchema } from "@/schemas/category";
 import { createCategory } from "@/server/actions/categories";
@@ -55,6 +56,8 @@ const CreateCategoryDialog = ({
     defaultValues: {
       name: "",
       icon: "",
+      limit: 0,
+      isLimit: false,
       type,
     },
   });
@@ -97,7 +100,13 @@ const CreateCategoryDialog = ({
       id: "create-category",
     });
 
-    mutate(values);
+    if (!values.isLimit) {
+      delete values.limit;
+    }
+
+    mutate({
+      ...values,
+    });
   };
 
   return (
@@ -152,6 +161,44 @@ const CreateCategoryDialog = ({
                 </FormItem>
               )}
             />
+
+            {type === "expense" && (
+              <FormField
+                control={form.control}
+                name="isLimit"
+                render={({ field }) => (
+                  <FormItem className="flex justify-between items-center">
+                    <FormLabel>Set Limit</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {type === "expense" && form.getValues("isLimit") && (
+              <FormField
+                control={form.control}
+                name="limit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Limit</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} disabled={isPending} />
+                    </FormControl>
+                    <FormDescription>
+                      Limits the amount that you can spend on this category of
+                      expenses
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="icon"

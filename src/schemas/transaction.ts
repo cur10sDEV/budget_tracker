@@ -6,6 +6,9 @@ export const transactionSchema = z.object({
   amount: z.coerce.number().positive().multipleOf(0.01),
   description: z.string().max(255).optional(),
   date: z.coerce.date(),
-  category: z.string(),
+  category: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
   type: transactionTypeSchema,
 });

@@ -25,12 +25,12 @@ import CategoryRow from "./CategoryRow";
 
 interface ICategoryPickerProps {
   type: TransactionType;
-  onChange: (value: string) => void;
+  onChange: (value: { id: string; name: string }) => void;
 }
 
 const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState({ id: "", name: "" });
 
   useEffect(() => {
     if (!value) return;
@@ -44,11 +44,11 @@ const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
   });
 
   const selectedCategory = userCategories.data?.find(
-    (category) => category.name === value
+    (category) => category.id === value.id
   );
 
   const successCallback = (category: Category) => {
-    setValue(category.name);
+    setValue({ id: category.id, name: category.name });
     setOpen((prev) => !prev);
   };
 
@@ -88,7 +88,7 @@ const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
                     key={category.name}
                     value={category.name}
                     onSelect={() => {
-                      setValue(category.name);
+                      setValue({ id: category.id, name: category.name });
                       setOpen((prev) => !prev);
                     }}
                     className="flex justify-between"
@@ -97,7 +97,7 @@ const CategoryPicker = ({ type, onChange }: ICategoryPickerProps) => {
                     <Check
                       className={cn(
                         "mr-2 size-4 opacity-0",
-                        value === category.name && "opacity-100"
+                        value.name === category.name && "opacity-100"
                       )}
                     />
                   </CommandItem>

@@ -18,13 +18,15 @@ export const createCategory = async (formData: CategorySchema) => {
     const validatedFields = validator(categorySchema, formData);
 
     if (validatedFields && validatedFields.data) {
-      const { name, icon, type } = validatedFields.data as CategorySchema;
+      const { name, icon, type, limit } =
+        validatedFields.data as CategorySchema;
 
       const createdCategory = await CategoryService.createTransactionCategory({
         name,
         icon,
         type,
         userId: user?.id,
+        limit,
       });
 
       return createdCategory;

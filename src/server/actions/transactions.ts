@@ -23,80 +23,88 @@ export const createTransaction = async (formData: TransactionSchema) => {
       const { type, amount, category, description, date } =
         validatedFields.data as TransactionSchema;
 
-      const isCategory = await CategoryService.getAUserCategoryByName(
+      const isCategory = await CategoryService.getAUserCategoryById(
         user.id,
-        category
+        category.id
       );
 
       if (!isCategory) {
         throw new Error("Category not found!");
       }
 
+      // if transaction exceeds the limit then do not move forward
+      const categoryStats = await TransactionService.getAUserCategoryStatsById(
+        user.id,
+        isCategory.id
+      );
+
+      return;
+
       // db $transaction to perform multiple operations - new transaction and update aggregate tables
 
-      await db.$transaction([
-        db.transaction.create({
-          data: {
-            amount,
-            date,
-            description: description || "",
-            type,
-            category: isCategory.name,
-            categoryIcon: isCategory.icon,
-            userId: user.id,
-          },
-        }),
-        db.monthHistory.upsert({
-          where: {
-            day_month_year_userId: {
-              userId: user.id,
-              day: date.getUTCDate(),
-              year: date.getUTCFullYear(),
-              month: date.getUTCMonth(),
-            },
-          },
-          create: {
-            userId: user.id,
-            day: date.getUTCDate(),
-            year: date.getUTCFullYear(),
-            month: date.getUTCMonth(),
-            expense: type === "expense" ? amount : 0,
-            income: type === "income" ? amount : 0,
-          },
-          update: {
-            expense: {
-              increment: type === "expense" ? amount : 0,
-            },
-            income: {
-              increment: type === "income" ? amount : 0,
-            },
-          },
-        }),
-        db.yearHistory.upsert({
-          where: {
-            month_year_userId: {
-              year: date.getUTCFullYear(),
-              month: date.getUTCMonth(),
-              userId: user.id,
-            },
-          },
-          create: {
-            userId: user.id,
-            year: date.getUTCFullYear(),
-            month: date.getUTCMonth(),
-            expense: type === "expense" ? amount : 0,
-            income: type === "income" ? amount : 0,
-          },
-          update: {
-            expense: {
-              increment: type === "expense" ? amount : 0,
-            },
-            income: {
-              increment: type === "income" ? amount : 0,
-            },
-          },
-        }),
-      ]);
+      // await db.$transaction([
+      //   db.transaction.create({
+      //     data: {
+      //       amount,
+      //       date,
+      //       description: description || "",
+      //       type,
+      //       category: isCategory.name,
+      //       categoryIcon: isCategory.icon,
+      //       userId: user.id,
+      //     },
+      //   }),
+      //   db.monthHistory.upsert({
+      //     where: {
+      //       day_month_year_userId: {
+      //         userId: user.id,
+      //         day: date.getUTCDate(),
+      //         year: date.getUTCFullYear(),
+      //         month: date.getUTCMonth(),
+      //       },
+      //     },
+      //     create: {
+      //       userId: user.id,
+      //       day: date.getUTCDate(),
+      //       year: date.getUTCFullYear(),
+      //       month: date.getUTCMonth(),
+      //       expense: type === "expense" ? amount : 0,
+      //       income: type === "income" ? amount : 0,
+      //     },
+      //     update: {
+      //       expense: {
+      //         increment: type === "expense" ? amount : 0,
+      //       },
+      //       income: {
+      //         increment: type === "income" ? amount : 0,
+      //       },
+      //     },
+      //   }),
+      //   db.yearHistory.upsert({
+      //     where: {
+      //       month_year_userId: {
+      //         year: date.getUTCFullYear(),
+      //         month: date.getUTCMonth(),
+      //         userId: user.id,
+      //       },
+      //     },
+      //     create: {
+      //       userId: user.id,
+      //       year: date.getUTCFullYear(),
+      //       month: date.getUTCMonth(),
+      //       expense: type === "expense" ? amount : 0,
+      //       income: type === "income" ? amount : 0,
+      //     },
+      //     update: {
+      //       expense: {
+      //         increment: type === "expense" ? amount : 0,
+      //       },
+      //       income: {
+      //         increment: type === "income" ? amount : 0,
+      //       },
+      //     },
+      //   }),
+      // ]);
     }
   } catch (error) {
     console.error(error);

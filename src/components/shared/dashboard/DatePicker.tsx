@@ -16,7 +16,7 @@ interface IDatePickerProps {
     {
       amount: number;
       date: Date;
-      category: string;
+      category: { id: string; name: string };
       type: "income" | "expense";
       description?: string | undefined;
     },

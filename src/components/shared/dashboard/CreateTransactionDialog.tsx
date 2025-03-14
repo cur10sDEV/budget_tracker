@@ -92,7 +92,7 @@ const CreateTransactionDialog = ({
   };
 
   const handleCategoryChange = useCallback(
-    (value: string) => {
+    (value: { id: string; name: string }) => {
       form.setValue("category", value);
     },
     [form]

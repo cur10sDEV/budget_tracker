@@ -21,8 +21,9 @@ model Category {
   type   String
   limit  Int?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
 
   @@unique([name, type, userId])
 }
@@ -34,8 +35,10 @@ model Transaction {
   date         DateTime
   userId       String
   type         String
-  category     String
+  categoryName String
   categoryIcon String
+  categoryId   String   @db.ObjectId
+  category     Category @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

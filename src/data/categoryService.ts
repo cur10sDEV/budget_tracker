@@ -26,11 +26,13 @@ class CategoryService {
     icon,
     type,
     userId,
+    limit,
   }: {
     name: string;
     icon: string;
     type: string;
     userId: string;
+    limit: number | undefined;
   }) {
     try {
       const createdCategory = await db.category.create({
@@ -38,6 +40,7 @@ class CategoryService {
           userId,
           name,
           type,
+          ...(limit && { limit }),
           icon,
         },
       });
@@ -49,12 +52,12 @@ class CategoryService {
     }
   }
 
-  static async getAUserCategoryByName(userId: string, name: string) {
+  static async getAUserCategoryById(userId: string, id: string) {
     try {
-      const category = await db.category.findFirst({
+      const category = await db.category.findUnique({
         where: {
           userId,
-          name,
+          id,
         },
       });
 
